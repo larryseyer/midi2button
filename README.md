@@ -10,7 +10,7 @@ Turn your MIDI keyboard into an OSC controller.
 
 ## What Does This Do?
 
-This module lets your MIDI keyboard talk to other programs using OSC messages. When you press a key on your keyboard, it can send a message to control lighting, audio, video, or any other OSC-enabled software.
+This module lets your MIDI keyboard talk to other programs using OSC messages. When you press a key on your keyboard or send a bank and program change, it can send a message to control lighting, audio, video, or any other OSC-enabled software.
 
 ## Typical Use Cases
 
