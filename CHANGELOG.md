@@ -5,6 +5,51 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2025-09-06
+
+### Added
+
+- **Full Bank and Program Change Support**:
+  - Responds to MIDI Program Change messages with Bank Select support
+  - Tracks bank state via CC 0 (MSB) and CC 32 (LSB) per MIDI channel
+  - Supports 16,384 banks × 128 programs = over 2 million possible triggers
+  - New "🎵 Program Change" mapping type in configuration
+- **Enhanced Configuration UI**:
+  - Dedicated Bank Number field (0-16383) for Program Change mappings
+  - Dedicated Program Number field (0-127) for Program Change mappings
+  - Clear visual separation between Note/CC and Program Change fields
+  - Added helpful inline documentation for Program Change setup
+
+- **New Variables for OSC Messages**:
+  - `$(bank)` - Current bank number
+  - `$(program)` - Program number
+  - Works alongside existing `$(value)`, `$(channel)`, `$(notecc)` variables
+
+### Changed
+
+- **Improved UI Text**:
+  - Changed "WHEN I press..." to "WHEN we receive..." to better reflect MIDI input nature
+  - Updated help text throughout to clarify the module receives MIDI and sends OSC
+  - Reorganized field layout for better visibility and understanding
+
+- **MIDI Display Enhancement**:
+  - Now shows "Program Change | Ch X | Bank Y | Prog Z" format for Program Changes
+  - Maintains existing display format for Notes and CC messages
+
+### Fixed
+
+- **Critical Bug Fix**: Program Change messages (2-byte) were being rejected due to incorrect message length check
+  - Changed minimum message length from 3 bytes to 2 bytes
+  - Program Changes now work correctly
+
+### Technical Details
+
+- Program Change messages are properly handled as 2-byte MIDI messages (status + program)
+- Bank selection uses standard MIDI implementation (CC 0 for MSB, CC 32 for LSB)
+- Full 14-bit bank addressing (0-16383) per MIDI specification
+- Maintains complete backward compatibility with existing Note and CC mappings
+- Each MIDI channel maintains independent bank state
+
 ## [1.0.2] - 2025-09-05
 
 ### Added

@@ -1,6 +1,6 @@
 {
 	"name": "companion-module-generic-midi2osc",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "MIDI to OSC converter module for Bitfocus Companion",
 	"main": "main.js",
 	"type": "module",
@@ -10,7 +10,7 @@
 		"build": "companion-module-build",
 		"build:dev": "companion-module-build --dev",
 		"dev": "companion-module-build --dev --watch",
-		"package": "npm run build && npm pack && echo 'Package created: generic-midi2osc-1.0.2.tgz'"
+		"package": "npm run build && npm pack && echo 'Package created: generic-midi2osc-1.0.3.tgz'"
 	},
 	"keywords": [
 		"companion-module",

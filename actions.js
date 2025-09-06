@@ -97,14 +97,47 @@ export function getActions(self) {
 					if (mapping && mapping.enabled) {
 						// Send OSC message for this mapping
 						if (self.oscHandler) {
-							// Replace $(value) with the actual value
-							let args = mapping.oscArgs?.replace('$(value)', value.toString()) || value.toString()
+							let args = mapping.oscArgs || ''
+
+							// Handle variable substitution based on mapping type
+							if (mapping.type === 'program') {
+								// For program changes, substitute bank and program values
+								const bank = mapping.bank || 0
+								const program = mapping.program || 0
+								const channel = mapping.channel || 1
+
+								args = args.replace(/\$\(bank\)/g, bank.toString())
+								args = args.replace(/\$\(program\)/g, program.toString())
+								args = args.replace(/\$\(channel\)/g, channel.toString())
+								args = args.replace(/\$\(value\)/g, value.toString())
+							} else {
+								// For notes and CC, just replace value
+								args = args.replace(/\$\(value\)/g, value.toString())
+							}
 
 							const success = self.oscHandler.sendMessage(mapping.oscIP, mapping.oscPort, mapping.oscAddress, args)
 							if (success) {
 								self.stats.messagesSent++
-								self.lastOscMessage = `${mapping.oscAddress} [${args}]`
+								// Store last sent OSC message in the proper format for display
+								self.lastOscMessage = {
+									ip: mapping.oscIP,
+									port: mapping.oscPort,
+									address: mapping.oscAddress,
+									args: args,
+									timestamp: Date.now(),
+								}
 								self.updateVariables()
+
+								// Clear OSC display after timeout
+								if (self.oscDisplayTimeout) {
+									clearTimeout(self.oscDisplayTimeout)
+								}
+								self.oscDisplayTimeout = setTimeout(() => {
+									self.lastOscMessage = null
+									self.refreshConfigFields() // Refresh UI
+									self.updateVariables()
+								}, 3000)
+
 								self.log('info', `Triggered mapping ${mappingIndex + 1}: ${mapping.oscAddress}`)
 							}
 						}

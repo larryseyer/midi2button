@@ -1,16 +1,23 @@
 # companion-module-generic-midi2osc
 
-![Version](https://img.shields.io/badge/version-1.0.2-blue)
+![Version](https://img.shields.io/badge/version-1.0.3-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Companion](https://img.shields.io/badge/Companion-3.0+-orange)
 
 Turn your MIDI keyboard into an OSC controller.
 
-[Download](https://github.com/larryseyer/companion-module-generic-midi2osc/releases/download/v1.0.2/generic-midi2osc-1.0.2.tgz)
+[Download](https://github.com/larryseyer/companion-module-generic-midi2osc/releases/download/v1.0.3/generic-midi2osc-1.0.3.tgz)
 
 ## What Does This Do?
 
 This module lets your MIDI keyboard talk to other programs using OSC messages. When you press a key on your keyboard, it can send a message to control lighting, audio, video, or any other OSC-enabled software.
+
+## Typical Use Cases
+
+- **Live Performance**: Use a MIDI foot controller to trigger scenes, cues, or effects in QLab, Resolume, or other OSC-enabled software
+- **Broadcast Control**: Map MIDI controllers to control video switchers, audio mixers, or lighting consoles via OSC
+- **Studio Automation**: Convert MIDI keyboard/pad messages to OSC for controlling DAWs, plugins, or custom software
+- **Program Changes**: Use MIDI Bank/Program Change messages from keyboards or controllers to switch between hundreds of different OSC commands (16,384 banks × 128 programs = over 2 million possible combinations!)
 
 ## Features
 
@@ -19,6 +26,7 @@ This module lets your MIDI keyboard talk to other programs using OSC messages. W
 ✅ **Works with Any MIDI Device** - Keyboards, drum pads, controllers
 ✅ **Flexible Rules** - Create up to 24 different mappings
 ✅ **Visual Feedback** - Buttons light up to show activity
+✅ **Bank & Program Changes** - Support for MIDI Bank Select and Program Change messages
 
 ## Quick Start Guide (3 Easy Steps!)
 
@@ -82,6 +90,7 @@ A rule tells the module: "When I press THIS key, send THAT message"
 
 - 🎹 Piano Key = A regular key on your keyboard
 - 🎛️ Knob/Slider = A knob or slider that you can turn/move
+- 🎵 Program Change = Used to switch sounds/patches with bank selection
 
 **Which number?** - Every key has a number (Middle C = 60)
 
@@ -93,7 +102,10 @@ A rule tells the module: "When I press THIS key, send THAT message"
 
 **Message data** - What information to send:
 
-- `$(value)` = How hard you pressed the key
+- `$(value)` = How hard you pressed the key (velocity)
+- `$(channel)` = The MIDI channel number
+- `$(bank)` = The bank number (for Program Changes)
+- `$(program)` = The program number (for Program Changes)
 - Keep this as-is unless you know what you're doing
 
 **To which computer?** - Where to send the message:
@@ -115,6 +127,46 @@ Let's make Middle C on your keyboard send an OSC message:
 6. **Press Middle C** - Watch the Activity Light turn green!
 
 That's it! When you press Middle C, it sends `/midi/note/60` with the velocity value.
+
+### Using Bank and Program Changes 🎵
+
+Program Changes let you trigger different OSC commands by switching "patches" on your MIDI device. Combined with Bank Select, you can access thousands of different triggers from a single MIDI controller!
+
+#### What Are Program Changes?
+
+Originally designed to switch sounds on synthesizers, Program Changes are perfect for triggering different scenes, cues, or states in your software. Many MIDI foot controllers, keyboards, and pad controllers can send these messages.
+
+#### How It Works
+
+1. **Your MIDI device sends two things:**
+   - **Bank Select** (optional): CC 0 and/or CC 32 to choose a bank (0-16383)
+   - **Program Change**: Selects a program number (0-127) within that bank
+
+2. **The module responds:**
+   - Tracks the current bank for each MIDI channel
+   - When a Program Change arrives, checks if you have a rule for that bank/program combo
+   - Sends your configured OSC message if there's a match
+
+#### Setting Up a Program Change Rule
+
+1. In your rule configuration, select **"🎵 Program Change"** from the dropdown
+2. Set the **🏦 Bank Number** (0-16383) - which bank to listen for
+3. Set the **🎵 Program Number** (0-127) - which program in that bank
+4. Configure your **OSC message** to send when this combo is received
+5. Save your configuration
+
+#### Real-World Examples
+
+- **Live Theater**: Bank 0 = Act 1, Bank 1 = Act 2. Program Changes trigger different lighting/sound cues
+- **Live Music**: Each song gets its own bank. Program Changes switch between verse/chorus/bridge effects
+- **Broadcast**: Bank per show segment. Programs trigger different camera angles or graphics
+- **Installation**: Different banks for different modes (day/night/special events)
+
+**Example Setup**:
+
+- MIDI sends: Bank 2, Program 5
+- Module sends: `/qlab/go/next` to trigger the next cue
+- Or: `/resolume/layer/1/clip/17/connect` to trigger a specific video clip
 
 ## Usage
 

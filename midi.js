@@ -13,6 +13,11 @@ export class MidiHandler {
 		this.isConnected = false
 		this.availablePorts = []
 		this.currentPortName = null
+		// Track current bank state per channel (1-16)
+		this.currentBank = {}
+		for (let ch = 1; ch <= 16; ch++) {
+			this.currentBank[ch] = { msb: 0, lsb: 0 }
+		}
 	}
 
 	async init(config) {
@@ -192,11 +197,11 @@ export class MidiHandler {
 	}
 
 	handleMidiMessage(msg) {
-		if (!msg || msg.length < 3) return
+		if (!msg || msg.length < 2) return
 
 		const statusByte = msg[0]
 		const data1 = msg[1]
-		const data2 = msg[2]
+		const data2 = msg[2] || 0 // Program Change messages only have 2 bytes
 
 		// Extract channel and message type
 		const channel = (statusByte & 0x0f) + 1 // MIDI channels are 1-16
@@ -235,11 +240,40 @@ export class MidiHandler {
 				break
 
 			case 0xb0: // Control Change
+				// Track Bank Select messages
+				if (data1 === 0) {
+					// Bank Select MSB (CC 0)
+					this.currentBank[channel].msb = data2
+					if (this.instance.config.enable_logging) {
+						this.instance.log('debug', `Bank Select MSB: ch=${channel} value=${data2}`)
+					}
+				} else if (data1 === 32) {
+					// Bank Select LSB (CC 32)
+					this.currentBank[channel].lsb = data2
+					if (this.instance.config.enable_logging) {
+						this.instance.log('debug', `Bank Select LSB: ch=${channel} value=${data2}`)
+					}
+				}
+
+				// Process CC message normally
 				this.instance.processMidiMessage(channel, 'cc', data1, data2)
 				if (this.instance.config.enable_logging) {
 					this.instance.log('debug', `CC: ch=${channel} cc=${data1} val=${data2}`)
 				}
 				break
+
+			case 0xc0: {
+				// Program Change
+				const bankNumber = this.currentBank[channel].msb * 128 + this.currentBank[channel].lsb
+				const programNumber = data1
+
+				// Process Program Change with bank information
+				this.instance.processMidiProgramChange(channel, bankNumber, programNumber)
+				if (this.instance.config.enable_logging) {
+					this.instance.log('debug', `Program Change: ch=${channel} bank=${bankNumber} program=${programNumber}`)
+				}
+				break
+			}
 
 			default:
 				// Other message types not currently supported

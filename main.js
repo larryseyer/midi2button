@@ -38,9 +38,11 @@ class Midi2OscInstance extends InstanceBase {
 			// Set default values for first mapping if not present
 			if (this.config[`mapping_0_enabled`] === undefined) {
 				this.config[`mapping_0_enabled`] = false
-				this.config[`mapping_0_channel`] = 1
+				this.config[`mapping_0_channel`] = 0 // All channels
 				this.config[`mapping_0_type`] = 'note'
 				this.config[`mapping_0_noteOrCC`] = 60
+				this.config[`mapping_0_bank`] = 0
+				this.config[`mapping_0_program`] = 0
 				this.config[`mapping_0_oscIP`] = '127.0.0.1'
 				this.config[`mapping_0_oscPort`] = 8000
 				this.config[`mapping_0_oscAddress`] = '/midi/note/60'
@@ -91,15 +93,22 @@ class Midi2OscInstance extends InstanceBase {
 		for (let i = 0; i < mappingCount; i++) {
 			const enabled = this.config[`mapping_${i}_enabled`]
 			if (enabled) {
+				const type = this.config[`mapping_${i}_type`] || 'note'
 				const mapping = {
 					enabled: true,
 					channel: this.config[`mapping_${i}_channel`] || 1,
-					type: this.config[`mapping_${i}_type`] || 'note',
+					type: type,
 					noteOrCC: this.config[`mapping_${i}_noteOrCC`] || 60,
 					oscIP: this.config[`mapping_${i}_oscIP`] || '127.0.0.1',
 					oscPort: this.config[`mapping_${i}_oscPort`] || 8000,
 					oscAddress: this.config[`mapping_${i}_oscAddress`] || '/midi',
 					oscArgs: this.config[`mapping_${i}_oscArgs`] || '$(value)',
+				}
+
+				// Add bank and program fields for program change type
+				if (type === 'program') {
+					mapping.bank = this.config[`mapping_${i}_bank`] || 0
+					mapping.program = this.config[`mapping_${i}_program`] || 0
 				}
 
 				// Validate mapping
@@ -220,6 +229,74 @@ class Midi2OscInstance extends InstanceBase {
 		this.updateVariables()
 	}
 
+	processMidiProgramChange(channel, bank, program) {
+		this.stats.messagesReceived++
+
+		// Update last received MIDI message
+		this.lastMidiMessage = {
+			channel,
+			type: 'program',
+			bank,
+			program,
+			timestamp: Date.now(),
+		}
+
+		// Find matching mappings for program changes
+		const matchingMappings = this.mappings.filter((mapping) => {
+			if (!mapping.enabled) return false
+			if (mapping.type !== 'program') return false
+			if (mapping.channel !== 0 && mapping.channel !== channel) return false
+			if (mapping.bank !== bank) return false
+			if (mapping.program !== program) return false
+			return true
+		})
+
+		// Update match status for display
+		this.lastMidiMessage.hasMatch = matchingMappings.length > 0
+
+		// Update the config fields to refresh the display
+		this.refreshConfigFields()
+
+		// Process each matching mapping
+		matchingMappings.forEach((mapping) => {
+			// Parse OSC arguments with variable substitution
+			let oscArgs = mapping.oscArgs
+			if (oscArgs) {
+				oscArgs = oscArgs.replace(/\$\(bank\)/g, bank)
+				oscArgs = oscArgs.replace(/\$\(program\)/g, program)
+				oscArgs = oscArgs.replace(/\$\(channel\)/g, channel)
+				oscArgs = oscArgs.replace(/\$\(value\)/g, 127) // Default value for program changes
+			}
+
+			// Send OSC message
+			this.oscHandler.sendMessage(mapping.oscIP, mapping.oscPort, mapping.oscAddress, oscArgs)
+			this.stats.messagesSent++
+
+			// Store last sent OSC message for display
+			this.lastOscMessage = {
+				ip: mapping.oscIP,
+				port: mapping.oscPort,
+				address: mapping.oscAddress,
+				args: oscArgs,
+				timestamp: Date.now(),
+			}
+
+			// Refresh config to show OSC message
+			this.refreshConfigFields()
+
+			// Clear OSC display after timeout
+			if (this.oscDisplayTimeout) {
+				clearTimeout(this.oscDisplayTimeout)
+			}
+			this.oscDisplayTimeout = setTimeout(() => {
+				this.lastOscMessage = null
+				this.refreshConfigFields() // Refresh UI
+			}, 3000)
+		})
+
+		this.updateVariables()
+	}
+
 	async destroy() {
 		if (this.oscDisplayTimeout) {
 			clearTimeout(this.oscDisplayTimeout)
@@ -233,7 +310,51 @@ class Midi2OscInstance extends InstanceBase {
 	}
 
 	async configUpdated(config) {
+		// Check if mappingCount increased (new mappings added)
+		const oldMappingCount = this.config?.mappingCount || 0
+		const newMappingCount = config.mappingCount || 0
+
 		this.config = config
+
+		// If mapping count increased, set defaults for new mappings
+		if (newMappingCount > oldMappingCount) {
+			for (let i = oldMappingCount; i < newMappingCount; i++) {
+				// Only set defaults if the fields are undefined
+				if (config[`mapping_${i}_enabled`] === undefined) {
+					config[`mapping_${i}_enabled`] = false
+				}
+				if (config[`mapping_${i}_channel`] === undefined) {
+					config[`mapping_${i}_channel`] = 0 // All channels
+				}
+				if (config[`mapping_${i}_type`] === undefined) {
+					config[`mapping_${i}_type`] = 'note'
+				}
+				if (config[`mapping_${i}_noteOrCC`] === undefined) {
+					config[`mapping_${i}_noteOrCC`] = 60 + i // Increment from Middle C
+				}
+				if (config[`mapping_${i}_bank`] === undefined) {
+					config[`mapping_${i}_bank`] = 0
+				}
+				if (config[`mapping_${i}_program`] === undefined) {
+					config[`mapping_${i}_program`] = i
+				}
+				if (config[`mapping_${i}_oscIP`] === undefined) {
+					config[`mapping_${i}_oscIP`] = '127.0.0.1'
+				}
+				if (config[`mapping_${i}_oscPort`] === undefined) {
+					config[`mapping_${i}_oscPort`] = 8000
+				}
+				if (config[`mapping_${i}_oscAddress`] === undefined) {
+					config[`mapping_${i}_oscAddress`] = `/midi/note/${60 + i}`
+				}
+				if (config[`mapping_${i}_oscArgs`] === undefined) {
+					config[`mapping_${i}_oscArgs`] = '$(value)'
+				}
+			}
+			// Save the config with new defaults
+			this.saveConfig(config)
+		}
+
 		this.parseMappings()
 
 		// Reinitialize handlers
@@ -315,7 +436,7 @@ class Midi2OscInstance extends InstanceBase {
 				label: '',
 				width: 12,
 				value:
-					'<div style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 4px solid #2196F3; margin-top: 20px;"><h2 style="margin: 0; color: #1565c0;">Step 2: Make Your Rules 📝</h2><p style="margin: 5px 0 0 0; color: #555;">Tell the computer: "When I press THIS key, send THAT message"</p></div>',
+					'<div style="background: #e3f2fd; padding: 15px; border-radius: 8px; border-left: 4px solid #2196F3; margin-top: 20px;"><h2 style="margin: 0; color: #1565c0;">Step 2: Make Your Rules 📝</h2><p style="margin: 5px 0 0 0; color: #555;">Tell the module: "When we receive THIS MIDI message, send THAT OSC message"</p></div>',
 			},
 
 			// Super simple mapping section
@@ -346,7 +467,7 @@ class Midi2OscInstance extends InstanceBase {
 				label: '',
 				width: 12,
 				value:
-					'<div style="background: #f0f0f0; padding: 15px; border-radius: 8px; margin-top: 30px;"><h3 style="margin: 0 0 10px 0;">Need Help? 🤔</h3><p style="margin: 5px 0;"><strong>What is OSC?</strong> It\'s a way for programs to talk to each other over the network.</p><p style="margin: 5px 0;"><strong>What is a MIDI Note?</strong> It\'s the number of the key you press (Middle C = 60).</p><p style="margin: 5px 0;"><strong>What is CC?</strong> Control Change - like knobs and sliders on your keyboard.</p></div>',
+					'<div style="background: #f0f0f0; padding: 15px; border-radius: 8px; margin-top: 30px;"><h3 style="margin: 0 0 10px 0;">Need Help? 🤔</h3><p style="margin: 5px 0;"><strong>What is OSC?</strong> It\'s a way for programs to talk to each other over the network.</p><p style="margin: 5px 0;"><strong>What is a MIDI Note?</strong> It\'s the number of the key you press (Middle C = 60).</p><p style="margin: 5px 0;"><strong>What is CC?</strong> Control Change - like knobs and sliders on your keyboard.</p><p style="margin: 5px 0;"><strong>What is Program Change?</strong> Used to switch sounds/patches. Banks (0-16383) organize programs (0-127) into groups.</p></div>',
 			},
 		]
 	}
@@ -357,9 +478,14 @@ class Midi2OscInstance extends InstanceBase {
 		}
 
 		const msg = this.lastMidiMessage
-		const typeText = msg.type === 'note' ? 'Note' : 'CC'
 		const matchText = msg.hasMatch ? '✓ MATCHED' : '✗ No match'
-		return `${typeText} | Ch ${msg.channel} | #${msg.noteOrCC} | Val ${msg.value} | ${matchText}`
+
+		if (msg.type === 'program') {
+			return `Program Change | Ch ${msg.channel} | Bank ${msg.bank} | Prog ${msg.program} | ${matchText}`
+		} else {
+			const typeText = msg.type === 'note' ? 'Note' : 'CC'
+			return `${typeText} | Ch ${msg.channel} | #${msg.noteOrCC} | Val ${msg.value} | ${matchText}`
+		}
 	}
 
 	getOscDisplayText() {
@@ -398,6 +524,7 @@ class Midi2OscInstance extends InstanceBase {
 		const typeChoices = [
 			{ id: 'note', label: '🎹 Piano Key (Note)' },
 			{ id: 'cc', label: '🎛️ Knob/Slider (CC)' },
+			{ id: 'program', label: '🎵 Program Change' },
 		]
 
 		// Add controls to manage mappings - using a number input with clear instructions
@@ -468,33 +595,76 @@ class Midi2OscInstance extends InstanceBase {
 					label: '',
 					width: 12,
 					value:
-						'<div style="background: #f9f9f9; padding: 10px; border-left: 3px solid #2196F3;"><strong style="color: #1976d2; font-size: 16px;">WHEN I press...</strong></div>',
+						'<div style="background: #f9f9f9; padding: 10px; border-left: 3px solid #2196F3;"><strong style="color: #1976d2; font-size: 16px;">WHEN we receive...</strong></div>',
+				},
+				{
+					type: 'static-text',
+					id: `rule_${i}_program_help`,
+					label: '',
+					width: 12,
+					value:
+						'<div style="background: #fffbf0; padding: 8px; border-radius: 5px; margin: 5px 0; font-size: 12px; color: #666;"><strong>For Program Changes:</strong> Your MIDI device sends Bank Select (CC 0/32) then Program Change. Configure which bank/program combo triggers this rule. Example: Bank 2, Program 5 = Patch 261 (2×128+5)</div>',
 				},
 				{
 					type: 'dropdown',
 					id: `mapping_${i}_type`,
 					label: 'What kind of control?',
-					width: 6,
+					width: 12,
 					default: 'note',
 					choices: typeChoices,
-				},
-				{
-					type: 'number',
-					id: `mapping_${i}_noteOrCC`,
-					label: 'Which number? (0-127)',
-					width: 3,
-					default: 60 + i,
-					min: 0,
-					max: 127,
-					tooltip: 'Middle C = 60',
 				},
 				{
 					type: 'dropdown',
 					id: `mapping_${i}_channel`,
 					label: 'From which channel?',
-					width: 3,
+					width: 4,
 					default: 0,
 					choices: channelChoices,
+				},
+				{
+					type: 'number',
+					id: `mapping_${i}_noteOrCC`,
+					label: 'Note/CC Number',
+					width: 4,
+					default: 60 + i,
+					min: 0,
+					max: 127,
+					tooltip: 'For Notes: Middle C = 60 | For CC: Controller number | Leave as-is for Program Changes',
+				},
+				{
+					type: 'static-text',
+					id: `rule_${i}_or`,
+					label: '',
+					width: 4,
+					value: '<div style="text-align: center; padding-top: 20px; color: #888;">— OR —</div>',
+				},
+				{
+					type: 'static-text',
+					id: `rule_${i}_program_section`,
+					label: '',
+					width: 12,
+					value:
+						'<div style="background: #f0f8ff; padding: 8px; border-radius: 5px; margin-top: 10px;"><strong>For Program Change Type Only:</strong></div>',
+				},
+				{
+					type: 'number',
+					id: `mapping_${i}_bank`,
+					label: '🏦 Bank Number',
+					width: 6,
+					default: 0,
+					min: 0,
+					max: 16383,
+					tooltip: 'Which bank to respond to (0-16383). Your device sends CC 0/32 to select this.',
+				},
+				{
+					type: 'number',
+					id: `mapping_${i}_program`,
+					label: '🎵 Program Number',
+					width: 6,
+					default: 0,
+					min: 0,
+					max: 127,
+					tooltip: 'Which program in the bank (0-127)',
 				},
 				{
 					type: 'static-text',
@@ -511,6 +681,7 @@ class Midi2OscInstance extends InstanceBase {
 					width: 6,
 					default: `/midi/note/${60 + i}`,
 					tooltip: 'Like an address for your message',
+					useVariables: true,
 				},
 				{
 					type: 'textinput',
@@ -518,7 +689,8 @@ class Midi2OscInstance extends InstanceBase {
 					label: '📝 Message data',
 					width: 6,
 					default: '$(value)',
-					tooltip: '$(value) sends how hard you pressed',
+					tooltip: 'Variables: $(value), $(channel), $(bank), $(program)',
+					useVariables: true,
 				},
 				{
 					type: 'textinput',
