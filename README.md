@@ -6,7 +6,7 @@
 
 Turn your MIDI keyboard into an OSC controller.
 
-[Download](https://github.com/larryseyer/companion-module-generic-midi2osc/releases/download/v1.0.3/generic-midi2osc-1.0.3.tgz)
+[Download](https://github.com/larryseyer/companion-module-generic-midi2osc/releases/download/v1.0.2/generic-midi2osc-1.0.3.tgz)
 
 ## What Does This Do?
 
