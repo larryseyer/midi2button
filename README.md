@@ -4,7 +4,9 @@
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Companion](https://img.shields.io/badge/Companion-3.0+-orange)
 
-Turn your MIDI keyboard into an OSC controller - it's as easy as 1-2-3!
+Turn your MIDI keyboard into an OSC controller.
+
+[Download](https://github.com/larryseyer/companion-module-generic-midi2osc/releases/download/v1.0.2/generic-midi2osc-1.0.2.tgz)
 
 ## What Does This Do?
 
