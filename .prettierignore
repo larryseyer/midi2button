@@ -1,0 +1,16 @@
+package.json
+*/package.json
+
+lib/module/*
+lib/resources/font.js
+electron-output/
+dist/
+webui/build/
+webui/public/legacy
+webui/src/routeTree.gen.ts
+/LICENSE.md
+
+module-local-dev
+bundled-modules
+
+companion/test/Upgrade/*/*.*.json

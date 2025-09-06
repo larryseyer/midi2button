@@ -1,0 +1,26 @@
+{
+	"id": "generic-midi2osc",
+	"name": "generic-midi2osc",
+	"shortname": "MIDI2OSC",
+	"description": "MIDI to OSC converter module for Bitfocus Companion",
+	"version": "1.0.1",
+	"license": "MIT",
+	"repository": "git+https://github.com/bitfocus/companion-module-generic-midi2osc.git",
+	"bugs": "https://github.com/bitfocus/companion-module-generic-midi2osc/issues",
+	"maintainers": [
+		{
+			"name": "Larry Seyer",
+			"email": "bitfocus@larryseyer.com"
+		}
+	],
+	"runtime": {
+		"type": "node18",
+		"api": "nodejs-ipc",
+		"apiVersion": "1.11.3",
+		"entrypoint": "../main.js"
+	},
+	"legacyIds": [],
+	"manufacturer": "Generic",
+	"products": ["MIDI to OSC Converter"],
+	"keywords": ["MIDI", "OSC", "converter", "automation", "broadcast"]
+}

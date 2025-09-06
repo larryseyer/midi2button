@@ -1,0 +1,44 @@
+{
+	"name": "companion-module-generic-midi2osc",
+	"version": "1.0.2",
+	"description": "MIDI to OSC converter module for Bitfocus Companion",
+	"main": "main.js",
+	"type": "module",
+	"scripts": {
+		"format": "prettier -w .",
+		"lint": "eslint .",
+		"build": "companion-module-build",
+		"build:dev": "companion-module-build --dev",
+		"dev": "companion-module-build --dev --watch",
+		"package": "npm run build && npm pack && echo 'Package created: generic-midi2osc-1.0.2.tgz'"
+	},
+	"keywords": [
+		"companion-module",
+		"midi",
+		"osc",
+		"converter",
+		"automation",
+		"broadcast"
+	],
+	"author": "Larry Seyer",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/bitfocus/companion-module-generic-midi2osc.git"
+	},
+	"bugs": {
+		"url": "https://github.com/bitfocus/companion-module-generic-midi2osc/issues"
+	},
+	"homepage": "https://github.com/bitfocus/companion-module-generic-midi2osc#readme",
+	"dependencies": {
+		"@companion-module/base": "~1.11.3",
+		"jazz-midi": "^1.7.9",
+		"jzz": "^1.8.0",
+		"osc": "^2.4.5"
+	},
+	"devDependencies": {
+		"@companion-module/tools": "^2.3.0",
+		"eslint": "^9.0.0",
+		"prettier": "^3.2.4"
+	}
+}
