@@ -1,12 +1,12 @@
 # companion-module-generic-midi2osc
 
-![Version](https://img.shields.io/badge/version-1.0.3-blue)
+![Version](https://img.shields.io/badge/version-1.0.4-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Companion](https://img.shields.io/badge/Companion-3.0+-orange)
 
 Turn your MIDI keyboard into an OSC controller.
 
-[Download](https://github.com/larryseyer/companion-module-generic-midi2osc/releases/download/v1.0.3/generic-midi2osc-1.0.3.tgz)
+[Download](https://github.com/larryseyer/companion-module-generic-midi2osc/releases/download/v1.0.4/generic-midi2osc-1.0.4.tgz)
 
 ## What Does This Do?
 
@@ -24,9 +24,11 @@ This module lets your MIDI keyboard talk to other programs using OSC messages. W
 ✅ **Super Simple Setup** - Connect your keyboard in seconds
 ✅ **Live Monitoring** - See what's happening in real-time
 ✅ **Works with Any MIDI Device** - Keyboards, drum pads, controllers
-✅ **Flexible Rules** - Create up to 24 different mappings
+✅ **Flexible Rules** - Create up to 24 different mappings with custom names
 ✅ **Visual Feedback** - Buttons light up to show activity
 ✅ **Bank & Program Changes** - Support for MIDI Bank Select and Program Change messages
+✅ **Enhanced UI** - Color-coded rules, duplicate/delete/reorder capabilities
+✅ **Import/Export** - Share or backup your rule configurations
 
 ## Quick Start Guide (3 Easy Steps!)
 
@@ -43,7 +45,8 @@ This module lets your MIDI keyboard talk to other programs using OSC messages. W
 2. Choose how many rules you want (start with 1 or 2, up to 24)
 3. Click SAVE to see your rules appear
 4. For each rule:
-   - Check "Turn this rule ON" ✅
+   - Give it a name (optional but helpful!)
+   - Check "Enable this rule" ✅
    - Pick what key triggers it (like Middle C = 60)
    - Set where to send the message (usually keep the defaults)
 5. Click SAVE again and you're done!
@@ -84,7 +87,11 @@ A rule tells the module: "When I press THIS key, send THAT message"
 
 ### Rule Settings Explained (In Simple Terms)
 
-**✅ Turn this rule ON** - Check this box to make the rule work
+**📝 Rule Name** - Give your rule a descriptive name (e.g., "Trigger Next Cue", "Red Lights")
+
+**✅ Enable this rule** - Check this box to make the rule work
+
+**📦 Collapse rule details** - Save screen space by hiding the rule configuration
 
 **What kind of control?**
 
@@ -119,12 +126,13 @@ A rule tells the module: "When I press THIS key, send THAT message"
 
 Let's make Middle C on your keyboard send an OSC message:
 
-1. **Turn on Rule 1** - Check the "✅ Turn this rule ON" box
-2. **Set it to Piano Key** - Choose "🎹 Piano Key" from the dropdown
-3. **Enter 60** - That's Middle C's number
-4. **Keep the rest as default** - It's already set up correctly
-5. **Click SAVE** at the bottom
-6. **Press Middle C** - Watch the Activity Light turn green!
+1. **Name your rule** - Type something like "My First Rule" (optional)
+2. **Turn on Rule 1** - Check the "✅ Enable this rule" box
+3. **Set it to Piano Key** - Choose "🎹 Piano Key" from the dropdown
+4. **Enter 60** - That's Middle C's number
+5. **Keep the rest as default** - It's already set up correctly
+6. **Click SAVE** at the bottom
+7. **Press Middle C** - Watch the Activity Light turn green!
 
 That's it! When you press Middle C, it sends `/midi/note/60` with the velocity value.
 
@@ -167,6 +175,68 @@ Originally designed to switch sounds on synthesizers, Program Changes are perfec
 - MIDI sends: Bank 2, Program 5
 - Module sends: `/qlab/go/next` to trigger the next cue
 - Or: `/resolume/layer/1/clip/17/connect` to trigger a specific video clip
+
+### Advanced Features (New in 1.0.4!)
+
+#### Rule Management
+
+Each rule now has a **dropdown menu** with actions:
+
+1. **📋 Duplicate this rule** - Create a copy of the rule
+2. **🗑️ Delete this rule** - Remove the rule
+3. **⬆️ Move this rule up** - Reorder rules
+4. **⬇️ Move this rule down** - Reorder rules
+5. **📤 Export this rule to log** - Export just this rule
+
+**How to use:** Select an action from the dropdown and click SAVE. The action executes and the dropdown resets.
+
+#### Global Actions
+
+At the top of the configuration, use the Global Actions dropdown for:
+
+- **📤 Export ALL rules to Companion Log** - Exports all rules as JSON
+- **🗑️ Clear ALL rules** - Remove all rules and start fresh
+
+#### Import/Export Rules
+
+**IMPORTANT:** Exports appear in the **Companion Log Window** formatted as JSON with clear copy markers!
+
+**To Export:**
+
+1. Select "Export ALL rules" from Global Actions dropdown (or "Export this rule" from a rule's dropdown)
+2. Click SAVE
+3. Open Companion's Log window: **View → Log** (or press Cmd/Ctrl+Shift+L)
+4. Look for the lines between `=====COPY FROM HERE=====` and `=====COPY TO HERE=====`
+5. Select **EVERYTHING** from the first marker to the last marker (including the marker lines)
+6. Copy (Cmd/Ctrl+C) - don't worry about timestamps, they're automatically cleaned during import!
+
+**To Import:**
+
+1. Copy your exported data from the log (including all timestamps and markers) or from a saved file
+2. Paste it directly into the "Import Rules" field in the configuration
+3. Click SAVE
+4. Your rules will be imported and the mapping count will update automatically
+5. The import field will clear upon successful import
+
+**What's Included in Export:**
+- All your mapping rules with their settings
+- MIDI port configuration (automatically restored on import)
+- Rule names and all parameters
+
+**Smart Import Features:**
+- Automatically strips timestamps from log output
+- Finds and extracts JSON data regardless of format
+- Handles both old format (array) and new format (with MIDI port)
+- Updates mapping count to match imported rules
+- Clears import field after successful import
+
+Perfect for:
+
+- Backing up your configuration with MIDI port settings
+- Sharing complete setups with colleagues
+- Moving configurations between computers
+- Creating templates for different shows/events
+- Recovering from configuration issues
 
 ## Usage
 

@@ -207,5 +207,234 @@ export function getPresets(_self) {
 		})
 	}
 
+	// Group 5: Rule Management - Preset buttons for managing rules
+	presets.push({
+		type: 'button',
+		category: '5. Rule Management',
+		name: 'Duplicate Rule 1',
+		style: {
+			text: '📋\\nDuplicate\\nRule 1',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(76, 175, 80),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'duplicate_mapping',
+						options: {
+							mapping_index: 1,
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	})
+
+	presets.push({
+		type: 'button',
+		category: '5. Rule Management',
+		name: 'Duplicate Rule 2',
+		style: {
+			text: '📋\\nDuplicate\\nRule 2',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(76, 175, 80),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'duplicate_mapping',
+						options: {
+							mapping_index: 2,
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	})
+
+	presets.push({
+		type: 'button',
+		category: '5. Rule Management',
+		name: 'Delete Rule 1',
+		style: {
+			text: '🗑️\\nDelete\\nRule 1',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(244, 67, 54),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'delete_mapping',
+						options: {
+							mapping_index: 1,
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	})
+
+	presets.push({
+		type: 'button',
+		category: '5. Rule Management',
+		name: 'Delete Rule 2',
+		style: {
+			text: '🗑️\\nDelete\\nRule 2',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(244, 67, 54),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'delete_mapping',
+						options: {
+							mapping_index: 2,
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	})
+
+	presets.push({
+		type: 'button',
+		category: '5. Rule Management',
+		name: 'Move Rule 2 Up',
+		style: {
+			text: '⬆️\\nMove\\nRule 2 Up',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(33, 150, 243),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'move_mapping_up',
+						options: {
+							mapping_index: 2,
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	})
+
+	presets.push({
+		type: 'button',
+		category: '5. Rule Management',
+		name: 'Move Rule 1 Down',
+		style: {
+			text: '⬇️\\nMove\\nRule 1 Down',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(33, 150, 243),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'move_mapping_down',
+						options: {
+							mapping_index: 1,
+						},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	})
+
+	presets.push({
+		type: 'button',
+		category: '5. Rule Management',
+		name: 'Add New Rule',
+		style: {
+			text: '➕\\nAdd New\\nRule',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(255, 152, 0),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'add_mapping',
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	})
+
+	presets.push({
+		type: 'button',
+		category: '5. Rule Management',
+		name: 'Export Rules',
+		style: {
+			text: '📤\\nExport\\nRules to Log',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(156, 39, 176),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'export_mappings',
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	})
+
+	presets.push({
+		type: 'button',
+		category: '5. Rule Management',
+		name: 'Clear All Rules',
+		style: {
+			text: '🔄\\nClear All\\nRules',
+			size: '14',
+			color: combineRgb(255, 255, 255),
+			bgcolor: combineRgb(158, 158, 158),
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'clear_mappings',
+						options: {},
+					},
+				],
+				up: [],
+			},
+		],
+		feedbacks: [],
+	})
+
 	return presets
 }

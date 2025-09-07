@@ -158,10 +158,14 @@ export function getActions(self) {
 				if (currentCount < 24) {
 					const newIndex = currentCount
 					// Set defaults for the new mapping
+					self.config[`mapping_${newIndex}_name`] = `Rule ${newIndex + 1}`
 					self.config[`mapping_${newIndex}_enabled`] = true
+					self.config[`mapping_${newIndex}_collapsed`] = false
 					self.config[`mapping_${newIndex}_channel`] = 1
 					self.config[`mapping_${newIndex}_type`] = 'note'
 					self.config[`mapping_${newIndex}_noteOrCC`] = 60 + newIndex
+					self.config[`mapping_${newIndex}_bank`] = 0
+					self.config[`mapping_${newIndex}_program`] = 0
 					self.config[`mapping_${newIndex}_oscIP`] = '127.0.0.1'
 					self.config[`mapping_${newIndex}_oscPort`] = 8000
 					self.config[`mapping_${newIndex}_oscAddress`] = `/midi/note/${60 + newIndex}`
@@ -172,6 +176,102 @@ export function getActions(self) {
 					self.log('info', `Added mapping ${currentCount + 1}`)
 				} else {
 					self.log('warn', 'Maximum number of mappings (24) reached')
+				}
+			},
+		},
+
+		duplicate_mapping: {
+			name: 'Duplicate Mapping',
+			options: [
+				{
+					type: 'number',
+					label: 'Mapping to Duplicate',
+					id: 'mapping_index',
+					default: 1,
+					min: 1,
+					max: 24,
+					tooltip: 'Which mapping to duplicate (1-24)',
+				},
+			],
+			callback: async (action) => {
+				const index = action.options.mapping_index - 1
+				if (self.duplicateMapping) {
+					self.duplicateMapping(index)
+				}
+			},
+		},
+
+		delete_mapping: {
+			name: 'Delete Mapping',
+			options: [
+				{
+					type: 'number',
+					label: 'Mapping to Delete',
+					id: 'mapping_index',
+					default: 1,
+					min: 1,
+					max: 24,
+					tooltip: 'Which mapping to delete (1-24)',
+				},
+			],
+			callback: async (action) => {
+				const index = action.options.mapping_index - 1
+				if (self.deleteMapping) {
+					self.deleteMapping(index)
+				}
+			},
+		},
+
+		move_mapping_up: {
+			name: 'Move Mapping Up',
+			options: [
+				{
+					type: 'number',
+					label: 'Mapping to Move',
+					id: 'mapping_index',
+					default: 2,
+					min: 2,
+					max: 24,
+					tooltip: 'Which mapping to move up (2-24)',
+				},
+			],
+			callback: async (action) => {
+				const index = action.options.mapping_index - 1
+				if (self.moveMapping) {
+					self.moveMapping(index, 'up')
+				}
+			},
+		},
+
+		move_mapping_down: {
+			name: 'Move Mapping Down',
+			options: [
+				{
+					type: 'number',
+					label: 'Mapping to Move',
+					id: 'mapping_index',
+					default: 1,
+					min: 1,
+					max: 23,
+					tooltip: 'Which mapping to move down (1-23)',
+				},
+			],
+			callback: async (action) => {
+				const index = action.options.mapping_index - 1
+				if (self.moveMapping) {
+					self.moveMapping(index, 'down')
+				}
+			},
+		},
+
+		export_mappings: {
+			name: 'Export Mappings (to log)',
+			options: [],
+			callback: async () => {
+				if (self.exportMappings) {
+					const json = self.exportMappings()
+					self.log('info', 'Exported mappings JSON:')
+					self.log('info', json)
 				}
 			},
 		},
@@ -193,6 +293,10 @@ export function getActions(self) {
 					delete self.config[`mapping_${lastIndex}_oscPort`]
 					delete self.config[`mapping_${lastIndex}_oscAddress`]
 					delete self.config[`mapping_${lastIndex}_oscArgs`]
+					delete self.config[`mapping_${lastIndex}_name`]
+					delete self.config[`mapping_${lastIndex}_collapsed`]
+					delete self.config[`mapping_${lastIndex}_bank`]
+					delete self.config[`mapping_${lastIndex}_program`]
 
 					self.config.mappingCount = currentCount - 1
 					self.saveConfig(self.config)
@@ -221,10 +325,14 @@ export function getActions(self) {
 				}
 				// Always keep at least one mapping with defaults
 				self.config.mappingCount = 1
+				self.config[`mapping_0_name`] = 'Rule 1'
 				self.config[`mapping_0_enabled`] = false // Start disabled
+				self.config[`mapping_0_collapsed`] = false
 				self.config[`mapping_0_channel`] = 1
 				self.config[`mapping_0_type`] = 'note'
 				self.config[`mapping_0_noteOrCC`] = 60
+				self.config[`mapping_0_bank`] = 0
+				self.config[`mapping_0_program`] = 0
 				self.config[`mapping_0_oscIP`] = '127.0.0.1'
 				self.config[`mapping_0_oscPort`] = 8000
 				self.config[`mapping_0_oscAddress`] = '/midi/note/60'
