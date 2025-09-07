@@ -10,7 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **Rule Naming**: Each mapping rule can now have a custom name for easy identification
-- **Visual Distinction**: Each rule has a unique darker background color for better visual organization
 - **Action Dropdowns**: Each rule has a dropdown menu with actions (duplicate, delete, move up/down, export)
 - **Global Actions**: New global dropdown for exporting all rules or clearing all rules
 - **Import/Export**:
@@ -21,8 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Import automatically updates mapping count to match imported rules
   - Import field clears automatically after successful import
   - Clear visual markers (`=====COPY FROM HERE=====` and `=====COPY TO HERE=====`) for easy copying
-- **Helper Functions**: New backend functions for duplicate, delete, move, import, and export operations
-- **Preset Buttons**: Added "5. Rule Management" preset category with buttons for common actions
+- **Helper Function Buttons**: New button functions for duplicate, delete, move, import, and export operations
 - **Enhanced Instructions**: Added clear UI instructions for accessing rule management features
 
 ### Changed
@@ -32,24 +30,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Exports now use warning level logs (yellow/orange) for better visibility
   - Export format changed to include MIDI port configuration
   - Exports are now pretty-printed JSON for better readability
-- **Import Logic**: Completely rewritten to use smart JSON extraction
+- **Import Logic**: Uses smart JSON extraction
   - Finds JSON array/object boundaries regardless of surrounding text
   - Properly handles nested structures and quoted strings
   - Supports both old format (array) and new format (with MIDI port)
 - **Action Execution**: Dropdown actions execute on SAVE and auto-reset to prevent accidental re-triggers
 - **Updated Field Labels**: More descriptive labels and tooltips throughout
 - **Better Visual Hierarchy**: Clearer separation between rule sections
-
-### Fixed
-
-- **Export Visibility**: Changed from info to warning level logs so exports are actually visible
-- **Duplicate Function**: Fixed issue where duplicated rules weren't showing in UI
-- **Configuration Updates**: Properly refresh UI after actions are performed
-- **Action Handling**: Actions now execute correctly and update config immediately
-- **Import Config Save Bug**: Fixed critical bug where imported rules were being overwritten by old config
-- **Import Parsing**: Fixed parsing of multi-line JSON with timestamps on each line
-- **Mapping Count**: Import now correctly updates the mapping count
-- **Config Persistence**: Fixed issue where `this.config` wasn't updated after import, causing rules to disappear
 
 ## [1.0.3] - 2025-09-06
 
