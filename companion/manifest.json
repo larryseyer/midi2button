@@ -3,7 +3,7 @@
 	"name": "generic-midi2buttons",
 	"shortname": "MIDI2BTN",
 	"description": "MIDI to Button trigger module for Bitfocus Companion",
-	"version": "1.4.2",
+	"version": "1.4.6",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-generic-midi2buttons.git",
 	"bugs": "https://github.com/bitfocus/companion-module-generic-midi2buttons/issues",

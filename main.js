@@ -48,7 +48,7 @@ class Midi2ButtonsInstance extends InstanceBase {
 
 		// Initialize defaults
 		if (!this.config.mappingCount || this.config.mappingCount < 1) {
-			this.config.mappingCount = 5
+			this.config.mappingCount = 10
 		}
 
 		// Initialize MIDI
@@ -73,7 +73,7 @@ class Midi2ButtonsInstance extends InstanceBase {
 
 	parseMappings() {
 		this.mappings = []
-		const mappingCount = this.config.mappingCount || 5
+		const mappingCount = this.config.mappingCount || 10
 
 		for (let i = 0; i < mappingCount; i++) {
 			if (this.config[`m${i}_on`]) {
@@ -93,6 +93,7 @@ class Midi2ButtonsInstance extends InstanceBase {
 					enabled: true,
 					type: this.config[`m${i}_type`] || 'note',
 					channel: this.config[`m${i}_ch`] || 1,
+					bank: this.config[`m${i}_bank`] !== undefined ? this.config[`m${i}_bank`] : -1,
 					value: this.config[`m${i}_val`] || 60,
 					trigger: this.config[`m${i}_trigger`] || 'on',
 					page: page,
@@ -149,13 +150,14 @@ class Midi2ButtonsInstance extends InstanceBase {
 			if (!m.enabled) return false
 			if (m.type !== 'program') return false
 			if (m.channel !== 0 && m.channel !== channel) return false
+			if (m.bank !== -1 && m.bank !== bank) return false // Check bank: -1 means any bank
 			if (m.value !== program) return false
 			return true
 		})
 
 		// Trigger buttons
 		matchingMappings.forEach((m) => {
-			this.log('info', `Program Change: Ch${channel} Prog${program} -> ${m.page}/${m.row}/${m.column}`)
+			this.log('info', `Program Change: Ch${channel} Bank${bank} Prog${program} -> ${m.page}/${m.row}/${m.column}`)
 			this.pressButton(m.page, m.row, m.column)
 		})
 	}
@@ -271,7 +273,7 @@ class Midi2ButtonsInstance extends InstanceBase {
 				id: 'mappingCount',
 				label: 'Number of Rules',
 				width: 12,
-				default: 5,
+				default: 10,
 				min: 1,
 				max: 20,
 			},
@@ -284,7 +286,6 @@ class Midi2ButtonsInstance extends InstanceBase {
 			},
 		]
 
-		// Add header row
 		// Add header row with proper widths that sum to 12
 		fields.push(
 			{
@@ -305,8 +306,15 @@ class Midi2ButtonsInstance extends InstanceBase {
 				type: 'static-text',
 				id: 'header_ch',
 				label: '',
+				width: 1,
+				value: '<b>Ch</b>',
+			},
+			{
+				type: 'static-text',
+				id: 'header_bank',
+				label: '',
 				width: 2,
-				value: '<b>Channel</b>',
+				value: '<b>Bank</b>',
 			},
 			{
 				type: 'static-text',
@@ -326,13 +334,13 @@ class Midi2ButtonsInstance extends InstanceBase {
 				type: 'static-text',
 				id: 'header_location',
 				label: '',
-				width: 3,
-				value: '<b>Button (P/R/C)</b>',
+				width: 2,
+				value: '<b>Button</b>',
 			}
 		)
 
-		// Add simple mapping fields
-		const mappingCount = this.config?.mappingCount || 5
+		// Add simple mapping fields with matching widths
+		const mappingCount = this.config?.mappingCount || 10
 		for (let i = 0; i < mappingCount; i++) {
 			fields.push(
 				{
@@ -351,18 +359,28 @@ class Midi2ButtonsInstance extends InstanceBase {
 					choices: [
 						{ id: 'note', label: 'Note' },
 						{ id: 'cc', label: 'CC' },
-						{ id: 'program', label: 'Program' },
+						{ id: 'program', label: 'Prog' },
 					],
 				},
 				{
 					type: 'number',
 					id: `m${i}_ch`,
 					label: '',
-					width: 2,
+					width: 1,
 					default: 1,
 					min: 0,
 					max: 16,
 					tooltip: '0 = All channels',
+				},
+				{
+					type: 'number',
+					id: `m${i}_bank`,
+					label: '',
+					width: 2,
+					default: -1,
+					min: -1,
+					max: 16383,
+					tooltip: '-1 = Any bank, 0-16383 = Specific bank',
 				},
 				{
 					type: 'number',
@@ -391,10 +409,10 @@ class Midi2ButtonsInstance extends InstanceBase {
 					type: 'textinput',
 					id: `m${i}_location`,
 					label: '',
-					width: 3,
+					width: 2,
 					default: `1/${Math.floor(i / 8)}/${i % 8}`,
 					tooltip: 'Button location: page/row/column (e.g., 1/0/0)',
-					regex: '/^\\d+\\/\\d+\\/\\d+$/',
+					regex: '^\\d+\\/\\d+\\/\\d+$',
 				}
 			)
 		}

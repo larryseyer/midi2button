@@ -5,6 +5,46 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.6] - 2025-09-18
+
+### Fixed
+
+- **Default Mapping Count**: Changed default from 5 to 10 mappings
+  - All 10 mappings now initialize properly with 'note' type as default
+  - Fixes issue where only first 5 mappings were being initialized
+
+## [1.4.5] - 2025-09-18
+
+### Fixed
+
+- **Save Button**: Fixed regex validation syntax that was preventing the configuration from saving
+  - Removed incorrect quote wrapping around regex pattern
+
+## [1.4.4] - 2025-09-18
+
+### Fixed
+
+- **UI Layout**: Fixed column width allocation for mapping rules
+  - Increased Bank field width for better visibility of bank numbers
+  - Value field now has adequate space to display 3-digit values (0-127)
+  - Button location field optimized, removed "(P/R/C)" suffix to save space
+  - All columns now properly align with 12-grid system preventing row overflow
+
+## [1.4.3] - 2025-09-18
+
+### Fixed
+
+- **Bank Support for Program Changes**: Added proper bank filtering for Program Change messages
+  - Each mapping rule now has a bank field (-1 for any bank, 0-16383 for specific banks)
+  - Program Changes now only trigger when both program number AND bank match
+  - Matches behavior of the OSC version which correctly filters by bank
+- **UI Layout**: Adjusted column widths to accommodate new Bank field in mapping rules
+
+### Added
+
+- **Bank Field**: New bank configuration for each mapping rule with tooltip explaining usage
+- **Enhanced Logging**: Added debug logging for bank tracking (MSB, LSB, and calculated bank number)
+
 ## [1.0.5] - 2025-09-17
 
 ### Fixed

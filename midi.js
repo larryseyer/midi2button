@@ -264,6 +264,10 @@ export class MidiHandler {
 
 				// Process Program Change with bank information
 				this.instance.log('info', `Program Change: ch=${channel} bank=${bankNumber} program=${programNumber}`)
+				this.instance.log(
+					'debug',
+					`Bank tracking - MSB:${this.currentBank[channel].msb} LSB:${this.currentBank[channel].lsb} Total:${bankNumber}`
+				)
 				this.instance.processMidiProgramChange(channel, bankNumber, programNumber)
 				break
 			}

@@ -1,6 +1,6 @@
 {
 	"name": "companion-module-generic-midi2buttons",
-	"version": "1.4.2",
+	"version": "1.4.6",
 	"description": "MIDI to Button trigger module for Bitfocus Companion",
 	"main": "main.js",
 	"type": "module",
@@ -10,7 +10,7 @@
 		"build": "companion-module-build",
 		"build:dev": "companion-module-build --dev",
 		"dev": "companion-module-build --dev --watch",
-		"package": "npm run build && npm pack && echo 'Package created: generic-midi2buttons-1.4.2.tgz'"
+		"package": "npm run build && npm pack && echo 'Package created: generic-midi2buttons-1.4.6.tgz'"
 	},
 	"keywords": [
 		"companion-module",
@@ -38,5 +38,6 @@
 		"@companion-module/tools": "^2.3.0",
 		"eslint": "^9.0.0",
 		"prettier": "^3.2.4"
-	}
+	},
+	"packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }
