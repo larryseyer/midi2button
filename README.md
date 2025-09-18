@@ -219,11 +219,13 @@ At the top of the configuration, use the Global Actions dropdown for:
 5. The import field will clear upon successful import
 
 **What's Included in Export:**
+
 - All your mapping rules with their settings
 - MIDI port configuration (automatically restored on import)
 - Rule names and all parameters
 
 **Smart Import Features:**
+
 - Automatically strips timestamps from log output
 - Finds and extracts JSON data regardless of format
 - Handles both old format (array) and new format (with MIDI port)

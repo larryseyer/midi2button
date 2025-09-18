@@ -1,16 +1,15 @@
-// Build configuration for companion-module-generic-midi2osc
+// Build configuration for companion-module-generic-midi2buttons
 // This file configures webpack to handle the jzz MIDI library properly
 
 const fs = require('fs')
 const path = require('path')
 
 module.exports = {
-	// Mark jzz, jazz-midi, and osc as external so they get included as dependencies
+	// Mark jzz and jazz-midi as external so they get included as dependencies
 	// These modules contain native binaries that must be installed, not bundled
 	externals: {
 		jzz: 'commonjs jzz',
 		'jazz-midi': 'commonjs jazz-midi',
-		osc: 'commonjs osc',
 	},
 
 	// Post-build step to fix package.json and ensure dependencies are included
@@ -19,12 +18,11 @@ module.exports = {
 		if (fs.existsSync(pkgPath)) {
 			const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'))
 			// Ensure the package name is correct
-			pkg.name = 'generic-midi2osc'
-			// Ensure JZZ, jazz-midi, and osc are included as dependencies so they get installed
+			pkg.name = 'generic-midi2buttons'
+			// Ensure JZZ and jazz-midi are included as dependencies so they get installed
 			pkg.dependencies = pkg.dependencies || {}
 			pkg.dependencies.jzz = '^1.8.0'
 			pkg.dependencies['jazz-midi'] = '^1.7.9'
-			pkg.dependencies.osc = '^2.4.5'
 			fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2))
 		}
 
@@ -32,8 +30,8 @@ module.exports = {
 		const sourceModules = path.join(context.root, 'node_modules')
 		const destModules = path.join(context.output, 'node_modules')
 
-		// Ensure jzz, jazz-midi, and osc are available in the package
-		const modulesToCopy = ['jzz', 'jazz-midi', 'osc']
+		// Ensure jzz and jazz-midi are available in the package
+		const modulesToCopy = ['jzz', 'jazz-midi']
 		for (const mod of modulesToCopy) {
 			const src = path.join(sourceModules, mod)
 			const dest = path.join(destModules, mod)

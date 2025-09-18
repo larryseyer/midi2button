@@ -207,12 +207,11 @@ export class MidiHandler {
 		const channel = (statusByte & 0x0f) + 1 // MIDI channels are 1-16
 		const messageType = statusByte & 0xf0
 
-		if (this.instance.config.enable_logging) {
-			this.instance.log(
-				'debug',
-				`MIDI Message: Status=0x${statusByte.toString(16)} Data1=${data1} Data2=${data2} Channel=${channel}`
-			)
-		}
+		// Always log MIDI messages for debugging
+		this.instance.log(
+			'info',
+			`MIDI Message: Status=0x${statusByte.toString(16)} Data1=${data1} Data2=${data2} Channel=${channel}`
+		)
 
 		// Process different message types
 		switch (messageType) {
@@ -220,23 +219,17 @@ export class MidiHandler {
 				if (data2 > 0) {
 					// Velocity > 0 means Note On
 					this.instance.processMidiMessage(channel, 'note', data1, data2)
-					if (this.instance.config.enable_logging) {
-						this.instance.log('debug', `Note ON: ch=${channel} note=${data1} vel=${data2}`)
-					}
+					this.instance.log('info', `Note ON: ch=${channel} note=${data1} vel=${data2}`)
 				} else {
 					// Velocity = 0 means Note Off
 					this.instance.processMidiMessage(channel, 'note', data1, 0)
-					if (this.instance.config.enable_logging) {
-						this.instance.log('debug', `Note OFF (vel=0): ch=${channel} note=${data1}`)
-					}
+					this.instance.log('info', `Note OFF (vel=0): ch=${channel} note=${data1}`)
 				}
 				break
 
 			case 0x80: // Note Off
 				this.instance.processMidiMessage(channel, 'note', data1, 0)
-				if (this.instance.config.enable_logging) {
-					this.instance.log('debug', `Note OFF: ch=${channel} note=${data1}`)
-				}
+				this.instance.log('info', `Note OFF: ch=${channel} note=${data1}`)
 				break
 
 			case 0xb0: // Control Change
@@ -244,21 +237,23 @@ export class MidiHandler {
 				if (data1 === 0) {
 					// Bank Select MSB (CC 0)
 					this.currentBank[channel].msb = data2
-					if (this.instance.config.enable_logging) {
-						this.instance.log('debug', `Bank Select MSB: ch=${channel} value=${data2}`)
-					}
+					this.instance.log(
+						'info',
+						`Bank Select MSB: ch=${channel} value=${data2} (new bank will be ${data2 * 128 + this.currentBank[channel].lsb})`
+					)
 				} else if (data1 === 32) {
 					// Bank Select LSB (CC 32)
 					this.currentBank[channel].lsb = data2
-					if (this.instance.config.enable_logging) {
-						this.instance.log('debug', `Bank Select LSB: ch=${channel} value=${data2}`)
-					}
+					this.instance.log(
+						'info',
+						`Bank Select LSB: ch=${channel} value=${data2} (new bank will be ${this.currentBank[channel].msb * 128 + data2})`
+					)
 				}
 
 				// Process CC message normally
 				this.instance.processMidiMessage(channel, 'cc', data1, data2)
-				if (this.instance.config.enable_logging) {
-					this.instance.log('debug', `CC: ch=${channel} cc=${data1} val=${data2}`)
+				if (data1 !== 0 && data1 !== 32) {
+					this.instance.log('info', `CC: ch=${channel} cc=${data1} val=${data2}`)
 				}
 				break
 
@@ -268,18 +263,14 @@ export class MidiHandler {
 				const programNumber = data1
 
 				// Process Program Change with bank information
+				this.instance.log('info', `Program Change: ch=${channel} bank=${bankNumber} program=${programNumber}`)
 				this.instance.processMidiProgramChange(channel, bankNumber, programNumber)
-				if (this.instance.config.enable_logging) {
-					this.instance.log('debug', `Program Change: ch=${channel} bank=${bankNumber} program=${programNumber}`)
-				}
 				break
 			}
 
 			default:
 				// Other message types not currently supported
-				if (this.instance.config.enable_logging) {
-					this.instance.log('debug', `Unsupported MIDI message type: 0x${messageType.toString(16)}`)
-				}
+				this.instance.log('info', `Unsupported MIDI message type: 0x${messageType.toString(16)}`)
 				break
 		}
 	}

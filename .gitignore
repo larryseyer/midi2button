@@ -41,11 +41,20 @@ temp/
 # CLAUDE
 .claude/
 
-
 # Prettier
 .prettierrc.json
 
 # Notes to Claude
 CRITICAL_COMPANION_MODULE_NOTES.md
 Working_Example_MIDI_Port/
+MIDI2OSC/
+
+# image
+HISE_OTTO_Recent_Image.png
+
+# Assets from JUCE builds
+Assets/Docs/
+
+# Serena
+.serena/
 

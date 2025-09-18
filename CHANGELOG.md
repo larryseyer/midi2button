@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5] - 2025-09-17
+
+### Fixed
+
+- **MIDI Message Handling**: Enhanced MIDI message processing with comprehensive logging for all message types
+- **Bank Select Tracking**: Improved bank select calculation and logging to show actual bank numbers (MSB \* 128 + LSB)
+- **OSC Message Format**: Fixed OSC handler to properly send messages without arguments when none are specified (for simple path-based triggers)
+- **Program Change Debugging**: Added detailed logging for program change messages to aid in troubleshooting
+
+### Changed
+
+- **Enhanced Logging**: All MIDI messages now logged with clear formatting for easier debugging
+- **OSC Sending**: Simplified OSC message sending to support both argument-based and path-only messages
+- **Bank State Display**: Bank select messages now show the calculated bank number immediately
+
+### Improved
+
+- **Debugging Capability**: Much more verbose and helpful logging throughout the MIDI-to-OSC pipeline
+- **Message Visibility**: Clear indication of what's being received (MIDI) and sent (OSC) in logs
+- **Error Reporting**: Better error messages when MIDI ports cannot be opened or OSC messages fail
+
 ## [1.0.4] - 2025-09-07
 
 ### Added
@@ -26,7 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **Improved UI Layout**: Rules are now wrapped in distinctly colored containers with stronger borders
-- **Export Method**: 
+- **Export Method**:
   - Exports now use warning level logs (yellow/orange) for better visibility
   - Export format changed to include MIDI port configuration
   - Exports are now pretty-printed JSON for better readability

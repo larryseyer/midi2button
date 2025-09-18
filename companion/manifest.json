@@ -1,12 +1,12 @@
 {
-	"id": "generic-midi2osc",
-	"name": "generic-midi2osc",
-	"shortname": "MIDI2OSC",
-	"description": "MIDI to OSC converter module for Bitfocus Companion",
-	"version": "1.0.1",
+	"id": "generic-midi2buttons",
+	"name": "generic-midi2buttons",
+	"shortname": "MIDI2BTN",
+	"description": "MIDI to Button trigger module for Bitfocus Companion",
+	"version": "1.4.2",
 	"license": "MIT",
-	"repository": "git+https://github.com/bitfocus/companion-module-generic-midi2osc.git",
-	"bugs": "https://github.com/bitfocus/companion-module-generic-midi2osc/issues",
+	"repository": "git+https://github.com/bitfocus/companion-module-generic-midi2buttons.git",
+	"bugs": "https://github.com/bitfocus/companion-module-generic-midi2buttons/issues",
 	"maintainers": [
 		{
 			"name": "Larry Seyer",
@@ -21,6 +21,6 @@
 	},
 	"legacyIds": [],
 	"manufacturer": "Generic",
-	"products": ["MIDI to OSC Converter"],
-	"keywords": ["MIDI", "OSC", "converter", "automation", "broadcast"]
+	"products": ["MIDI to Button Trigger"],
+	"keywords": ["MIDI", "buttons", "trigger", "automation", "control"]
 }

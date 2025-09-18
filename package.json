@@ -1,7 +1,7 @@
 {
-	"name": "companion-module-generic-midi2osc",
-	"version": "1.0.4",
-	"description": "MIDI to OSC converter module for Bitfocus Companion",
+	"name": "companion-module-generic-midi2buttons",
+	"version": "1.4.2",
+	"description": "MIDI to Button trigger module for Bitfocus Companion",
 	"main": "main.js",
 	"type": "module",
 	"scripts": {
@@ -10,31 +10,29 @@
 		"build": "companion-module-build",
 		"build:dev": "companion-module-build --dev",
 		"dev": "companion-module-build --dev --watch",
-		"package": "npm run build && npm pack && echo 'Package created: generic-midi2osc-1.0.4.tgz'"
+		"package": "npm run build && npm pack && echo 'Package created: generic-midi2buttons-1.4.2.tgz'"
 	},
 	"keywords": [
 		"companion-module",
 		"midi",
-		"osc",
-		"converter",
-		"automation",
-		"broadcast"
+		"buttons",
+		"trigger",
+		"automation"
 	],
 	"author": "Larry Seyer",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/bitfocus/companion-module-generic-midi2osc.git"
+		"url": "git+https://github.com/bitfocus/companion-module-generic-midi2buttons.git"
 	},
 	"bugs": {
-		"url": "https://github.com/bitfocus/companion-module-generic-midi2osc/issues"
+		"url": "https://github.com/bitfocus/companion-module-generic-midi2buttons/issues"
 	},
-	"homepage": "https://github.com/bitfocus/companion-module-generic-midi2osc#readme",
+	"homepage": "https://github.com/bitfocus/companion-module-generic-midi2buttons#readme",
 	"dependencies": {
 		"@companion-module/base": "~1.11.3",
 		"jazz-midi": "^1.7.9",
-		"jzz": "^1.8.0",
-		"osc": "^2.4.5"
+		"jzz": "^1.8.0"
 	},
 	"devDependencies": {
 		"@companion-module/tools": "^2.3.0",
