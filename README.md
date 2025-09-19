@@ -1,6 +1,6 @@
 # companion-module-generic-midi2buttons
 
-![Version](https://img.shields.io/badge/version-1.4.6-blue)
+![Version](https://img.shields.io/badge/version-2.0.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Companion](https://img.shields.io/badge/Companion-3.0+-orange)
 
@@ -12,6 +12,14 @@ Turn your MIDI controller into a button trigger for Companion.
 
 This module lets your MIDI controller trigger Companion buttons directly. When you press a key, turn a knob, or send a program change, it can press any button on any page in Companion - triggering your macros, controlling your devices, and automating your workflow.
 
+## 🚀 New in Version 2.0.0
+
+**Complete redesign with a powerful text-based mapping system!**
+- No more confusing menus - just simple, readable text mappings
+- Support for unlimited mappings (previously limited to 20)
+- Cleaner, more intuitive syntax
+- Full bank support for program changes (MSB and LSB)
+
 ## Typical Use Cases
 
 - **Live Performance**: Use a MIDI foot controller to trigger scenes, cues, or camera switches in your show
@@ -21,169 +29,153 @@ This module lets your MIDI controller trigger Companion buttons directly. When y
 
 ## Features
 
-✅ **Super Simple Setup** - Connect your MIDI device in seconds
+✅ **Text-Based Mapping** - Simple, readable format for all your mappings
+✅ **Unlimited Mappings** - No more limits, add as many as you need
 ✅ **Live Monitoring** - See what's happening in real-time
 ✅ **Works with Any MIDI Device** - Keyboards, drum pads, controllers, foot pedals
-✅ **Flexible Rules** - Create up to 20 different mappings (default 10)
 ✅ **Visual Feedback** - See triggered buttons in Companion
-✅ **Bank & Program Changes** - Full support for MIDI Bank Select (0-16383) and Program Change messages
+✅ **Full Bank Support** - Complete MSB/LSB bank select for 16,384 banks
 ✅ **Note On/Off/Both** - Trigger on key press, release, or both
 ✅ **Control Changes** - Map any CC message to any button
 ✅ **Any Channel** - Listen to specific MIDI channels or all at once
 
-## Quick Start Guide (3 Easy Steps!)
+## Quick Start Guide (Even Easier!)
 
-### Step 1: Connect Your Keyboard 🎹
+### Step 1: Connect Your MIDI Device 🎹
 
-1. Plug in your MIDI keyboard to your computer
+1. Plug in your MIDI controller to your computer
 2. Open the module settings in Companion
-3. Pick your keyboard from the dropdown list
-4. Click SAVE at the bottom
+3. Pick your device from the MIDI Port dropdown
+4. Click SAVE
 
-### Step 2: Configure Your Mappings 📝
+### Step 2: Add Your Mappings 📝
 
-1. Stay in the module settings
-2. You'll see 10 mapping rules by default (can adjust up to 20)
-3. For each rule:
-   - Check the "On" checkbox to enable it ✅
-   - Pick the Type: Note, CC, or Program
-   - Set the Channel (0 = all channels)
-   - Set the Bank (for Program Changes, -1 = any bank)
-   - Set the Value (note number, CC number, or program number)
-   - Choose Trigger: On, Off, or Both (for notes)
-   - Enter the Button location: page/row/column (e.g., 1/0/0)
-4. Click SAVE and you're done!
+In the **Mappings** text area, enter one mapping per line using this simple format:
 
-### Step 3: Test It! 🎉
+```
+{MIDI: command} {page/row/column}
+```
 
-1. Press keys on your MIDI controller
-2. Watch the Companion buttons get triggered
-3. Check the log for confirmation messages
+### Examples:
 
-### Monitoring Variables 📊
+```
+// Program Changes with Bank Select
+{MIDI: CC00.9, PC12@1} {1/0/0}     // Bank 9, Program 12, Channel 1
+{MIDI: CC00.2, CC32.5, PC64@1} {1/0/1}  // Bank MSB 2, LSB 5, Program 64
+{MIDI: PC12@1} {1/0/2}             // Program 12, Channel 1 (no bank change)
 
-The module provides these variables for monitoring:
+// Notes
+{MIDI: N60@1.on} {1/1/0}           // Middle C, Channel 1, Note On
+{MIDI: N60@1.off} {1/1/1}          // Middle C, Channel 1, Note Off
+{MIDI: N60@0.both} {1/1/2}         // Middle C, All channels, both on/off
 
-- **$(midi2buttons:midi_connected)** - Shows MIDI connection status
-- **$(midi2buttons:last_triggered_page)** - Last triggered page number
-- **$(midi2buttons:last_triggered_row)** - Last triggered row number
-- **$(midi2buttons:last_triggered_col)** - Last triggered column number
-- **$(midi2buttons:trigger_count)** - Total number of triggers
+// Control Changes
+{MIDI: CC7@1} {1/2/0}              // Volume (CC7), Channel 1
+{MIDI: CC64@0} {1/2/1}             // Sustain pedal, All channels
+{MIDI: CC1@16} {1/2/2}             // Mod wheel, Channel 16
+```
+
+### Step 3: Save and Test! 🎉
+
+1. Click SAVE at the bottom
+2. Press keys on your MIDI controller
+3. Watch Companion buttons get triggered
+4. Check the log for confirmation
+
+## Mapping Syntax Guide
+
+### Format
+`{MIDI: <commands>} {page/row/column}`
+
+### Commands
+
+**Program Changes:**
+- `PC<num>@<channel>` - Program change (0-127) on channel (1-16, 0=all)
+- `CC00.<value>` - Bank MSB (0-127)
+- `CC32.<value>` - Bank LSB (0-127)
+
+**Notes:**
+- `N<num>@<channel>.<trigger>` - Note (0-127) on channel with trigger
+- Trigger options: `on`, `off`, `both`
+
+**Control Changes:**
+- `CC<num>@<channel>` - Control Change (0-127) on channel
+
+### Tips
+- Use `@0` or omit channel for all channels
+- Comments can be added with `//`
+- Bank values: 0-127 for MSB/LSB
+- Note/CC/Program values: 0-127
+- Middle C = Note 60
+
+## Monitoring Variables 📊
+
+The module provides these variables:
+
+- **$(midi2buttons:midi_status)** - MIDI connection status
+- **$(midi2buttons:last_triggered_page)** - Last triggered page
+- **$(midi2buttons:last_triggered_row)** - Last triggered row
+- **$(midi2buttons:last_triggered_col)** - Last triggered column
+- **$(midi2buttons:trigger_count)** - Total triggers count
 
 ## Installation
 
 ### Easy Way
 
-1. Download the module file from the releases page
+1. Download the module file from releases
 2. Open Companion
-3. Go to the Developer tab
-4. Click "Import Module" and pick the file
-5. Done! Find it in your Connections list
+3. Go to Developer tab
+4. Click "Import Module" and select the file
+5. Find it in your Connections list!
 
-## Understanding the Settings
+## Real-World Examples
 
-### What's a Mapping?
+### Live Theater
+```
+// Act 1 cues (Bank 0)
+{MIDI: CC00.0, PC1@1} {1/0/0}   // Opening scene
+{MIDI: CC00.0, PC2@1} {1/0/1}   // Scene 2
+{MIDI: CC00.0, PC3@1} {1/0/2}   // Scene 3
 
-A mapping tells the module: "When I receive THIS MIDI message, press THAT Companion button"
+// Act 2 cues (Bank 1)
+{MIDI: CC00.1, PC1@1} {2/0/0}   // Act 2 opening
+{MIDI: CC00.1, PC2@1} {2/0/1}   // Scene 2
+```
 
-### Mapping Settings Explained
+### Broadcast Control
+```
+// Camera switching
+{MIDI: N36@10.on} {1/0/0}       // Cam 1 (kick drum triggers cam)
+{MIDI: N38@10.on} {1/0/1}       // Cam 2 (snare triggers cam)
+{MIDI: N42@10.on} {1/0/2}       // Cam 3 (hi-hat triggers cam)
 
-**On** - Enable or disable this mapping
-
-**Type** - What kind of MIDI message to listen for:
-- **Note** = Piano keys, drum pads
-- **CC** = Control Change (knobs, sliders, pedals)
-- **Prog** = Program Change (preset/patch switches)
-
-**Ch** - MIDI channel (1-16, or 0 for all channels)
-
-**Bank** - For Program Changes only (-1 = any bank, 0-16383 = specific bank)
-
-**Value** - The MIDI value to match:
-- For Notes: 0-127 (Middle C = 60)
-- For CC: Controller number 0-127
-- For Program: Program number 0-127
-
-**Trigger** - When to trigger (Notes only):
-- **On** = Key press/pad hit
-- **Off** = Key release
-- **Both** = Both press and release
-
-**Button** - Companion button location as page/row/column (e.g., 1/0/0)
-
-### Example: Setting Up Your First Mapping
-
-Let's make Middle C trigger button 1/0/0 in Companion:
-
-1. **Check the On box** - Enable the mapping
-2. **Set Type to Note** - We're using a piano key
-3. **Set Ch to 0** - Listen on all channels
-4. **Set Value to 60** - Middle C
-5. **Set Trigger to On** - Trigger on key press
-6. **Set Button to 1/0/0** - First button on page 1
-7. **Click SAVE** at the bottom
-8. **Press Middle C** - Watch button 1/0/0 get triggered!
-
-### Using Bank and Program Changes 🎵
-
-Program Changes let you trigger different buttons by switching "patches" on your MIDI device. Combined with Bank Select, you can access thousands of different button triggers from a single MIDI controller!
-
-#### What Are Program Changes?
-
-Originally designed to switch sounds on synthesizers, Program Changes are perfect for triggering different scenes, cues, or states. Many MIDI foot controllers, keyboards, and pad controllers can send these messages.
-
-#### How It Works
-
-1. **Your MIDI device sends:**
-   - **Bank Select** (optional): CC 0 and/or CC 32 to choose a bank (0-16383)
-   - **Program Change**: Selects a program number (0-127) within that bank
-
-2. **The module responds:**
-   - Tracks the current bank for each MIDI channel
-   - When a Program Change arrives, checks if you have a mapping for that bank/program combo
-   - Triggers the configured Companion button if there's a match
-
-#### Setting Up a Program Change Mapping
-
-1. Set **Type** to **"Prog"**
-2. Set the **Bank** number (-1 for any bank, or 0-16383 for specific bank)
-3. Set the **Value** (program number 0-127)
-4. Set the **Button** location to trigger
-5. Save your configuration
-
-#### Real-World Examples
-
-- **Live Theater**: Bank 0 = Act 1, Bank 1 = Act 2. Programs trigger different lighting/sound cues
-- **Live Music**: Each song gets its own bank. Programs switch between verse/chorus/bridge
-- **Broadcast**: Bank per show segment. Programs trigger camera angles or graphics
-- **Installation**: Different banks for different modes (day/night/special events)
+// Graphics control
+{MIDI: CC1@1} {1/1/0}           // Mod wheel controls lower third
+{MIDI: CC7@1} {1/1/1}           // Volume fader controls overlay
+```
 
 ## Version History
 
-### v1.4.6 (2025-09-18)
-- Fixed default mapping count from 5 to 10
-- All mappings now initialize with proper defaults
+### v2.0.0 (2025-01-19)
+- **Major Update**: Complete redesign with text-based mapping system
+- Removed complex UI menus in favor of simple text format
+- Support for unlimited mappings
+- Improved parsing with better error handling
+- Updated to use modern fetch API for button triggers
+- Full support for Bank MSB and LSB (16,384 banks)
+- Fixed button state management for reliable repeated triggers
+- Implemented proper down/up button press sequence with optimized delays
+- Added button press queueing to handle rapid MIDI messages
 
-### v1.4.5 (2025-09-18)
-- Fixed save button issue with regex validation
+### v1.4.6 (2025-01-18)
+- Fixed default mapping count and initialization
 
-### v1.4.4 (2025-09-18)
-- Fixed UI layout column widths for better visibility
-
-### v1.4.3 (2025-09-18)
-- Added full bank support for Program Changes
-- Each mapping now has configurable bank field
-- Program Changes only trigger when both bank and program match
-
-### v1.4.2 (2025-09-17)
-- Complete rewrite as MIDI to Button trigger module
-- Direct Companion button triggering via HTTP API
-- Support for Notes, CC, and Program Changes with Bank Select
-- Real-time MIDI monitoring and variables
+### v1.4.2 (2025-01-17)
+- Initial release of MIDI to Button trigger module
 
 ## Support
 
-For issues or feature requests, please visit the [GitHub repository](https://github.com/bitfocus/companion-module-generic-midi2buttons).
+For issues or feature requests, visit the [GitHub repository](https://github.com/bitfocus/companion-module-generic-midi2buttons).
 
 ## License
 

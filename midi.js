@@ -238,23 +238,20 @@ export class MidiHandler {
 					// Bank Select MSB (CC 0)
 					this.currentBank[channel].msb = data2
 					this.instance.log(
-						'info',
+						'debug',
 						`Bank Select MSB: ch=${channel} value=${data2} (new bank will be ${data2 * 128 + this.currentBank[channel].lsb})`
 					)
 				} else if (data1 === 32) {
 					// Bank Select LSB (CC 32)
 					this.currentBank[channel].lsb = data2
 					this.instance.log(
-						'info',
+						'debug',
 						`Bank Select LSB: ch=${channel} value=${data2} (new bank will be ${this.currentBank[channel].msb * 128 + data2})`
 					)
 				}
 
-				// Process CC message normally
+				// Process CC message (this will log it)
 				this.instance.processMidiMessage(channel, 'cc', data1, data2)
-				if (data1 !== 0 && data1 !== 32) {
-					this.instance.log('info', `CC: ch=${channel} cc=${data1} val=${data2}`)
-				}
 				break
 
 			case 0xc0: {

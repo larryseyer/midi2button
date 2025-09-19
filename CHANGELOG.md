@@ -5,6 +5,50 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2025-01-19
+
+### Changed - BREAKING CHANGES
+
+- **Complete UI Redesign**: Replaced complex field-based configuration with simple text-based mapping system
+  - Removed all dropdown menus, checkboxes, and individual field inputs
+  - New syntax: `{MIDI: command} {page/row/column}` for all mappings
+  - Support for unlimited mappings (was limited to 20)
+  - Much cleaner and more intuitive interface
+
+### Added
+
+- **Text-Based Mapping Parser**: Powerful new parser supporting:
+  - Program Changes with full bank support: `{MIDI: CC00.9, PC12@1} {1/0/0}`
+  - Notes with triggers: `{MIDI: N60@1.on} {1/1/0}`
+  - Control Changes: `{MIDI: CC7@1} {1/2/0}`
+  - Comments with `//` for documentation
+  - Line-by-line error reporting
+
+- **Enhanced Bank Support**:
+  - Full MSB/LSB support for 16,384 banks
+  - Syntax: `CC00.X` for MSB, `CC32.X` for LSB
+  - Automatic bank calculation from MSB and LSB values
+
+- **Comprehensive Examples**: Built-in examples showing all use cases with inline comments
+
+### Improved
+
+- **HTTP API Communication**: Updated to use modern fetch API instead of http.request
+  - Better error handling
+  - Timeout support (5 seconds)
+  - More reliable button triggering
+
+- **Simplified Configuration**: Only 4 config fields now:
+  - MIDI Port selection
+  - Companion IP and Port
+  - Mappings text area
+
+### Fixed
+
+- **Column Alignment**: No more misaligned headers and fields
+- **Channel Visibility**: Channel selection now fully visible
+- **Bank Field**: Proper space allocation for bank values
+
 ## [1.4.6] - 2025-09-18
 
 ### Fixed
