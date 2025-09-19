@@ -2,6 +2,9 @@ import { InstanceBase, runEntrypoint, InstanceStatus, combineRgb } from '@compan
 import { MidiHandler } from './midi.js'
 import { upgrades } from './upgrades.js'
 
+// Node.js 18+ has fetch built-in
+/* global fetch, AbortController */
+
 class Midi2ButtonsInstance extends InstanceBase {
 	constructor(internal) {
 		super(internal)
@@ -104,11 +107,7 @@ class Midi2ButtonsInstance extends InstanceBase {
 					const port = this.config.http_port || 8000
 
 					// Try different IPs to see which one actually triggers the button
-					const hosts = [
-						this.config.http_host || '127.0.0.1',
-						'127.0.0.1',
-						'localhost',
-					]
+					const hosts = [this.config.http_host || '127.0.0.1', '127.0.0.1', 'localhost']
 
 					for (const host of hosts) {
 						const url = `http://${host}:${port}/api/location/${page}/${row}/${col}/press`
@@ -122,7 +121,10 @@ class Midi2ButtonsInstance extends InstanceBase {
 							})
 
 							if (response.ok) {
-								this.log('warn', `✅ SUCCESS at ${host}: Status ${response.status} - Check if button ${page}/${row}/${col} flashed!`)
+								this.log(
+									'warn',
+									`✅ SUCCESS at ${host}: Status ${response.status} - Check if button ${page}/${row}/${col} flashed!`
+								)
 							} else {
 								this.log('info', `❌ Failed at ${host}: Status ${response.status}`)
 							}
@@ -131,7 +133,7 @@ class Midi2ButtonsInstance extends InstanceBase {
 						}
 
 						// Small delay between attempts
-						await new Promise(resolve => setTimeout(resolve, 500))
+						await new Promise((resolve) => setTimeout(resolve, 500))
 					}
 				},
 			},
@@ -423,7 +425,10 @@ class Midi2ButtonsInstance extends InstanceBase {
 		this.parseMappings()
 
 		this.updateStatus(InstanceStatus.Ok)
-		this.log('warn', `✅ Module initialized - IP: ${this.config.http_host || '127.0.0.1'}:${this.config.http_port || 8000}`)
+		this.log(
+			'warn',
+			`✅ Module initialized - IP: ${this.config.http_host || '127.0.0.1'}:${this.config.http_port || 8000}`
+		)
 	}
 
 	parseMappings() {
@@ -460,13 +465,13 @@ class Midi2ButtonsInstance extends InstanceBase {
 				continue
 			}
 
-			const [_, midiCommands, pageStr, rowStr, colStr] = match
+			const [, midiCommands, pageStr, rowStr, colStr] = match
 			const page = parseInt(pageStr)
 			const row = parseInt(rowStr)
 			const column = parseInt(colStr)
 
 			// Parse MIDI commands (can be multiple, comma-separated)
-			const commands = midiCommands.split(',').map(cmd => cmd.trim())
+			const commands = midiCommands.split(',').map((cmd) => cmd.trim())
 
 			let bankMSB = -1
 			let bankLSB = -1
@@ -523,8 +528,7 @@ class Midi2ButtonsInstance extends InstanceBase {
 						this.log('warn', `Line ${lineNum + 1}: Invalid CC: ${cmd}`)
 						cc = null
 					}
-				}
-				else {
+				} else {
 					this.log('warn', `Line ${lineNum + 1}: Unknown command: ${cmd}`)
 				}
 			}
@@ -566,7 +570,8 @@ class Midi2ButtonsInstance extends InstanceBase {
 				this.log('warn', `✅ Parsed: Note${note} Ch${channel} ${trigger} -> Button ${page}/${row}/${column}`)
 			}
 
-			if (cc !== null && cc !== 0 && cc !== 32) { // Don't map bank select CCs as triggers
+			if (cc !== null && cc !== 0 && cc !== 32) {
+				// Don't map bank select CCs as triggers
 				this.mappings.push({
 					enabled: true,
 					type: 'cc',
@@ -589,10 +594,13 @@ class Midi2ButtonsInstance extends InstanceBase {
 	processMidiMessage(channel, type, noteOrCC, value) {
 		// Log incoming MIDI in a clear format - using warn to ensure visibility
 		if (type === 'note') {
-			const noteNames = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
+			const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 			const octave = Math.floor(noteOrCC / 12) - 1
 			const noteName = noteNames[noteOrCC % 12]
-			this.log('warn', `🎹 MIDI IN: Note ${noteName}${octave} (${noteOrCC}) Ch${channel} Vel${value} [${value > 0 ? 'ON' : 'OFF'}]`)
+			this.log(
+				'warn',
+				`🎹 MIDI IN: Note ${noteName}${octave} (${noteOrCC}) Ch${channel} Vel${value} [${value > 0 ? 'ON' : 'OFF'}]`
+			)
 		} else if (type === 'cc') {
 			this.log('warn', `🎛️ MIDI IN: CC${noteOrCC} Ch${channel} Value${value}`)
 		}
@@ -687,7 +695,7 @@ class Midi2ButtonsInstance extends InstanceBase {
 			if (this.buttonPressQueue.length > 0) {
 				const delay = this.config.press_delay || 500
 				this.log('info', `⏸️ Waiting ${delay}ms before next press`)
-				await new Promise(resolve => setTimeout(resolve, delay))
+				await new Promise((resolve) => setTimeout(resolve, delay))
 			}
 		}
 
@@ -698,7 +706,7 @@ class Midi2ButtonsInstance extends InstanceBase {
 		// Use Companion's HTTP API to press the button
 		const host = this.config.http_host || '127.0.0.1'
 		const port = this.config.http_port || 8000
-		const method = this.config.press_method || 'press'
+		// const method = this.config.press_method || 'press' // Not used anymore, always using down/up
 
 		// ALWAYS use down/up for proper state management
 		// Even in "press" mode, we'll do down/up to ensure clean state
@@ -736,7 +744,7 @@ class Midi2ButtonsInstance extends InstanceBase {
 
 			// INCREASED DELAY: Hold the button down longer to ensure Companion registers it
 			// This simulates a more realistic human button press duration
-			await new Promise(resolve => setTimeout(resolve, 200))
+			await new Promise((resolve) => setTimeout(resolve, 200))
 
 			this.log('info', `📤 HTTP: Button ${page}/${row}/${column} UP`)
 
@@ -757,8 +765,7 @@ class Midi2ButtonsInstance extends InstanceBase {
 
 			// Give Companion a bit more time to fully process and reset button state
 			// This prevents rapid successive triggers from interfering with each other
-			await new Promise(resolve => setTimeout(resolve, 150))
-
+			await new Promise((resolve) => setTimeout(resolve, 150))
 		} catch (error) {
 			this.log('error', `❌ HTTP ERROR: ${error.message}`)
 		}

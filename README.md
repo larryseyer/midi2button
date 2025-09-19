@@ -15,6 +15,7 @@ This module lets your MIDI controller trigger Companion buttons directly. When y
 ## 🚀 New in Version 2.0.0
 
 **Complete redesign with a powerful text-based mapping system!**
+
 - No more confusing menus - just simple, readable text mappings
 - Support for unlimited mappings (previously limited to 20)
 - Cleaner, more intuitive syntax
@@ -85,23 +86,28 @@ In the **Mappings** text area, enter one mapping per line using this simple form
 ## Mapping Syntax Guide
 
 ### Format
+
 `{MIDI: <commands>} {page/row/column}`
 
 ### Commands
 
 **Program Changes:**
+
 - `PC<num>@<channel>` - Program change (0-127) on channel (1-16, 0=all)
 - `CC00.<value>` - Bank MSB (0-127)
 - `CC32.<value>` - Bank LSB (0-127)
 
 **Notes:**
+
 - `N<num>@<channel>.<trigger>` - Note (0-127) on channel with trigger
 - Trigger options: `on`, `off`, `both`
 
 **Control Changes:**
+
 - `CC<num>@<channel>` - Control Change (0-127) on channel
 
 ### Tips
+
 - Use `@0` or omit channel for all channels
 - Comments can be added with `//`
 - Bank values: 0-127 for MSB/LSB
@@ -131,6 +137,7 @@ The module provides these variables:
 ## Real-World Examples
 
 ### Live Theater
+
 ```
 // Act 1 cues (Bank 0)
 {MIDI: CC00.0, PC1@1} {1/0/0}   // Opening scene
@@ -143,6 +150,7 @@ The module provides these variables:
 ```
 
 ### Broadcast Control
+
 ```
 // Camera switching
 {MIDI: N36@10.on} {1/0/0}       // Cam 1 (kick drum triggers cam)
@@ -157,6 +165,7 @@ The module provides these variables:
 ## Version History
 
 ### v2.0.0 (2025-01-19)
+
 - **Major Update**: Complete redesign with text-based mapping system
 - Removed complex UI menus in favor of simple text format
 - Support for unlimited mappings
@@ -168,9 +177,11 @@ The module provides these variables:
 - Added button press queueing to handle rapid MIDI messages
 
 ### v1.4.6 (2025-01-18)
+
 - Fixed default mapping count and initialization
 
 ### v1.4.2 (2025-01-17)
+
 - Initial release of MIDI to Button trigger module
 
 ## Support
