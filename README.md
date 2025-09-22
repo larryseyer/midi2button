@@ -1,6 +1,6 @@
 # companion-module-generic-midi2buttons
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue)
+![Version](https://img.shields.io/badge/version-2.0.1-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Companion](https://img.shields.io/badge/Companion-3.0+-orange)
 
@@ -12,7 +12,14 @@ Turn your MIDI controller into a button trigger for Companion.
 
 This module lets your MIDI controller trigger Companion buttons directly. When you press a key, turn a knob, or send a program change, it can press any button on any page in Companion - triggering your macros, controlling your devices, and automating your workflow.
 
-## 🚀 New in Version 2.0.0
+## 🚀 Version 2.0.1 - Bug Fix
+
+**Fixed critical startup crash on fresh installations:**
+- Module now initializes properly on new machines without existing configuration
+- Added proper default values for all configuration parameters
+- No migration or backward compatibility changes - clean fix only
+
+## Version 2.0.0 - Major Update
 
 **Complete redesign with a powerful text-based mapping system!**
 

@@ -17,7 +17,16 @@ class Midi2ButtonsInstance extends InstanceBase {
 	}
 
 	async init(config) {
-		this.config = config
+		// Ensure config is always an object, even if null/undefined is passed
+		this.config = config || {}
+
+		// Set default values for essential config properties
+		if (!this.config.http_host) this.config.http_host = '127.0.0.1'
+		if (!this.config.http_port) this.config.http_port = 8000
+		if (!this.config.mappingCount) this.config.mappingCount = 10
+		if (this.config.midi_port_index === undefined) this.config.midi_port_index = -1
+		if (!this.config.press_delay) this.config.press_delay = 500
+
 		this.updateStatus(InstanceStatus.Connecting)
 
 		// Initialize variables
@@ -402,11 +411,6 @@ class Midi2ButtonsInstance extends InstanceBase {
 			},
 		})
 
-		// Initialize defaults
-		if (!this.config.mappingCount || this.config.mappingCount < 1) {
-			this.config.mappingCount = 10
-		}
-
 		// Initialize MIDI
 		try {
 			this.midiHandler = new MidiHandler(this)
@@ -433,6 +437,12 @@ class Midi2ButtonsInstance extends InstanceBase {
 
 	parseMappings() {
 		this.mappings = []
+
+		// Ensure config exists
+		if (!this.config) {
+			this.log('warn', 'No configuration available - cannot parse mappings')
+			return
+		}
 
 		// Collect all mapping lines from individual fields
 		const lines = []
@@ -787,7 +797,16 @@ class Midi2ButtonsInstance extends InstanceBase {
 	}
 
 	async configUpdated(config) {
-		this.config = config
+		// Ensure config is always an object
+		this.config = config || {}
+
+		// Set default values for essential config properties
+		if (!this.config.http_host) this.config.http_host = '127.0.0.1'
+		if (!this.config.http_port) this.config.http_port = 8000
+		if (!this.config.mappingCount) this.config.mappingCount = 10
+		if (this.config.midi_port_index === undefined) this.config.midi_port_index = -1
+		if (!this.config.press_delay) this.config.press_delay = 500
+
 		this.parseMappings()
 
 		// Reconnect MIDI if needed

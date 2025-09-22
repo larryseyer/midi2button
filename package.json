@@ -1,6 +1,6 @@
 {
 	"name": "companion-module-generic-midi2buttons",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"description": "MIDI to Button trigger module for Bitfocus Companion",
 	"main": "main.js",
 	"type": "module",
