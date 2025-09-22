@@ -14,6 +14,16 @@ class Midi2ButtonsInstance extends InstanceBase {
 		this.midiPortChoices = [{ id: -1, label: 'Select MIDI Port' }]
 		this.buttonPressQueue = []
 		this.processingQueue = false
+
+		// Initialize config with defaults to prevent "Connection config unavailable" error
+		this.config = {
+			http_host: '127.0.0.1',
+			http_port: 8000,
+			mapping_count: 10,
+			midi_port_index: -1,
+			press_delay: 500,
+			debug: true,
+		}
 	}
 
 	async init(config) {
@@ -829,6 +839,18 @@ class Midi2ButtonsInstance extends InstanceBase {
 	}
 
 	getConfigFields() {
+		// Ensure config exists with defaults
+		if (!this.config) {
+			this.config = {
+				http_host: '127.0.0.1',
+				http_port: 8000,
+				mapping_count: 10,
+				midi_port_index: -1,
+				press_delay: 500,
+				debug: true,
+			}
+		}
+
 		// Get available MIDI ports for dropdown
 		const midiPortChoices = this.midiPortChoices || [{ id: -1, label: 'None - Please refresh MIDI ports' }]
 

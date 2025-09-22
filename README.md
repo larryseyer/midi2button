@@ -15,6 +15,7 @@ This module lets your MIDI controller trigger Companion buttons directly. When y
 ## 🚀 Version 2.0.1 - Bug Fix
 
 **Fixed critical startup crash on fresh installations:**
+
 - Module now initializes properly on new machines without existing configuration
 - Added proper default values for all configuration parameters
 - No migration or backward compatibility changes - clean fix only

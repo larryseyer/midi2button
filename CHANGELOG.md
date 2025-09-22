@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.0.1] - 2025-01-22
 
 ### Fixed
+
 - **Critical startup crash on fresh installations**: Module now properly initializes with default configuration values when no config exists
 - Added null-safe config handling in `init()`, `configUpdated()`, and `parseMappings()` methods
 - Default values: `http_host: '127.0.0.1'`, `http_port: 8000`, `mappingCount: 10`, `midi_port_index: -1`, `press_delay: 500`
