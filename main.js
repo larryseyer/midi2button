@@ -456,7 +456,7 @@ class Midi2ButtonsInstance extends InstanceBase {
 
 		// Collect all mapping lines from individual fields
 		const lines = []
-		const mappingCount = this.config.mappingCount || 10
+		const mappingCount = this.config.mapping_count || 10
 		for (let i = 0; i < mappingCount; i++) {
 			const mapping = this.config[`mapping_${i}`]
 			if (mapping && mapping.trim()) {
