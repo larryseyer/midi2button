@@ -1,6 +1,6 @@
 # companion-module-generic-midi2buttons
 
-![Version](https://img.shields.io/badge/version-2.0.1-blue)
+![Version](https://img.shields.io/badge/version-2.0.2-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Companion](https://img.shields.io/badge/Companion-3.0+-orange)
 
@@ -12,7 +12,15 @@ Turn your MIDI controller into a button trigger for Companion.
 
 This module lets your MIDI controller trigger Companion buttons directly. When you press a key, turn a knob, or send a program change, it can press any button on any page in Companion - triggering your macros, controlling your devices, and automating your workflow.
 
-## 🚀 Version 2.0.1 - Bug Fix
+## 🚀 Version 2.0.2 - Bug Fix
+
+**Fixed mapping count configuration:**
+
+- Fixed typo preventing mapping_count configuration from working properly
+- Users can now set mapping_count to any value between 1-200
+- Previously, mappings beyond 10 were being ignored due to incorrect config field name
+
+## Version 2.0.1 - Bug Fix
 
 **Fixed critical startup crash on fresh installations:**
 
